@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Me — Premium Profile</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+<style>
+:root{
+  --bg-deep:#020a0d;
+  --mint:#25f0c0;
+  --mint-2:#4ad8ff;
+  --gold:#f0c96b;
+  --text:#eafaf7;
+  --muted:#7fa8ad;
+  --glass:rgba(255,255,255,.05);
+  --glass-2:rgba(255,255,255,.08);
+  --stroke:rgba(255,255,255,.09);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit','Hind Siliguri',sans-serif;-webkit-tap-highlight-color:transparent;}
+body{
+  background:var(--bg-deep);color:var(--text);
+  display:flex;justify-content:center;align-items:flex-start;min-height:100vh;
+}
+
+/* APP SHELL */
+.app-container{
+  width:100%;max-width:430px;min-height:100vh;position:relative;
+  padding-bottom:110px;overflow:hidden;
+  background:
+    radial-gradient(120% 60% at 50% -10%, #0b3a42 0%, transparent 60%),
+    linear-gradient(180deg,#07262c 0%, #04161a 45%, #020a0d 100%);
+  box-shadow:0 0 60px rgba(0,0,0,.9);
+}
+.app-container::before,.app-container::after{
+  content:'';position:absolute;border-radius:50%;pointer-events:none;filter:blur(60px);z-index:0;
+}
+.app-container::before{
+  width:320px;height:320px;top:-140px;left:-120px;
+  background:radial-gradient(circle,rgba(37,240,192,.28),transparent 70%);
+}
+.app-container::after{
+  width:300px;height:300px;top:340px;right:-150px;
+  background:radial-gradient(circle,rgba(74,216,255,.18),transparent 70%);
+}
+
+/* TOP BAR */
+.top-bar{
+  position:relative;z-index:2;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:22px 20px 12px;
+}
+.top-bar .title{
+  font-size:22px;font-weight:800;letter-spacing:.5px;
+  background:linear-gradient(90deg,#ffffff,#9ff5e0);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.settings-icon{
+  width:40px;height:40px;display:grid;place-items:center;
+  font-size:16px;color:var(--mint);cursor:pointer;
+  background:var(--glass);border:1px solid var(--stroke);
+  border-radius:14px;backdrop-filter:blur(12px);transition:.25s;
+}
+.settings-icon:active{transform:scale(.92);background:var(--glass-2);}
+
+/* PROFILE */
+.profile-section{position:relative;z-index:2;padding:14px 20px 6px;}
+.profile-info{display:flex;align-items:center;justify-content:flex-start;gap:12px;}
+.profile-left{display:flex;align-items:center;gap:16px;min-width:0;}
+
+.avatar-wrap{
+  position:relative;width:82px;height:82px;flex-shrink:0;cursor:pointer;transition:.3s;
+}
+.avatar-wrap:active{transform:scale(.95);}
+.avatar-wrap::before{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(from 0deg,#25f0c0,#4ad8ff,#a78bfa,#25f0c0);
+  animation:spin 7s linear infinite;
+  box-shadow:0 0 22px rgba(37,240,192,.45);
+}
+.avatar-wrap::after{
+  content:'';position:absolute;inset:-8px;border-radius:50%;
+  background:radial-gradient(circle,rgba(37,240,192,.22),transparent 70%);z-index:-1;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.avatar-wrap img{
+  position:absolute;top:3px;left:3px;
+  width:calc(100% - 6px);height:calc(100% - 6px);
+  border-radius:50%;object-fit:cover;
+  border:2px solid #04161a;background:#04161a;
+}
+.camera-badge{
+  position:absolute;bottom:-2px;right:-2px;z-index:3;
+  width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:11px;
+  color:#031215;
+  background:linear-gradient(135deg,#25f0c0,#4ad8ff);
+  border:2.5px solid #062026;
+  box-shadow:0 4px 12px rgba(37,240,192,.5);
+}
+
+.user-details{display:flex;flex-direction:column;gap:8px;min-width:0;}
+.username-wrap{display:flex;align-items:center;gap:8px;cursor:pointer;transition:.2s;}
+.username-wrap:active{opacity:.7;}
+.user-details .username{
+  font-size:21px;font-weight:700;letter-spacing:.2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;
+  background:linear-gradient(90deg,#ffffff,#c9fff0);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.edit-icon{
+  font-size:11px;color:#031215;
+  background:linear-gradient(135deg,#25f0c0,#4ad8ff);
+  width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+  box-shadow:0 3px 10px rgba(37,240,192,.4);
+}
+.id-badge{
+  display:inline-flex;align-items:center;gap:7px;width:fit-content;
+  background:linear-gradient(90deg,rgba(37,240,192,.14),rgba(74,216,255,.10));
+  border:1px solid rgba(37,240,192,.28);
+  padding:4px 11px;border-radius:20px;
+  font-size:11.5px;font-weight:500;color:#9fe9dd;letter-spacing:.3px;
+}
+.id-badge i{font-size:11px;cursor:pointer;color:var(--mint);transition:.2s;}
+.id-badge i:active{transform:scale(.8);}
+
+/* STATS */
+.stats-row{
+  display:flex;align-items:center;justify-content:space-around;
+  margin-top:20px;padding:16px 8px;
+  background:var(--glass);border:1px solid var(--stroke);
+  border-radius:20px;backdrop-filter:blur(14px);
+  box-shadow:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.06);
+}
+.stat-item{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:pointer;flex:1;padding:6px 4px;border-radius:12px;transition:.2s;
+}
+.stat-item:active{background:rgba(37,240,192,.08);}
+.stat-item .num{
+  font-size:20px;font-weight:800;
+  background:linear-gradient(180deg,#ffffff,#8ff0dd);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.stat-item .label{font-size:11.5px;color:var(--muted);font-weight:500;letter-spacing:.3px;}
+.divider{
+  width:1px;height:28px;
+  background:linear-gradient(180deg,transparent,rgba(255,255,255,.18),transparent);
+}
+
+/* SVIP */
+.svip-card{
+  position:relative;z-index:2;overflow:hidden;
+  margin:22px 16px;padding:18px 18px;
+  display:flex;justify-content:space-between;align-items:center;
+  border-radius:22px;
+  background:
+    radial-gradient(90% 120% at 0% 0%, rgba(240,201,107,.18), transparent 55%),
+    linear-gradient(135deg,#0a2d33 0%,#082026 55%,#04141a 100%);
+  border:1px solid rgba(240,201,107,.45);
+  box-shadow:0 14px 34px rgba(0,0,0,.5),inset 0 1px 0 rgba(240,201,107,.25);
+}
+.svip-card::before{
+  content:'';position:absolute;top:0;left:-60%;width:50%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.16),transparent);
+  transform:skewX(-18deg);animation:shine 3.6s ease-in-out infinite;
+}
+@keyframes shine{0%{left:-60%;}55%{left:130%;}100%{left:130%;}}
+.svip-info{display:flex;flex-direction:column;gap:7px;z-index:2;}
+.svip-title{
+  font-size:26px;font-weight:800;font-style:italic;letter-spacing:1px;
+  background:linear-gradient(180deg,#fff7d6,#f0c96b 55%,#b8860b);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  text-shadow:0 2px 12px rgba(240,201,107,.35);
+}
+.svip-subtitle{font-size:11.5px;color:#a8cfd0;letter-spacing:.2px;}
+.enter-btn{
+  margin-top:8px;display:inline-flex;align-items:center;gap:6px;width:fit-content;
+  padding:6px 16px;border-radius:30px;font-size:11.5px;font-weight:600;cursor:pointer;
+  color:#ffeda3;
+  background:linear-gradient(135deg,rgba(240,201,107,.22),rgba(240,201,107,.06));
+  border:1px solid rgba(240,201,107,.6);
+  box-shadow:0 0 16px rgba(240,201,107,.22);transition:.25s;
+}
+.enter-btn:active{transform:scale(.94);}
+.svip-badge-img{
+  width:88px;height:88px;object-fit:contain;z-index:2;
+  filter:drop-shadow(0 0 16px rgba(240,201,107,.65));
+  animation:float 3.5s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
+
+/* MENU */
+.menu-list{position:relative;z-index:2;padding:0 16px;display:flex;flex-direction:column;gap:11px;}
+.menu-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:15px 17px;border-radius:18px;cursor:pointer;
+  background:var(--glass);border:1px solid var(--stroke);
+  backdrop-filter:blur(12px);
+  box-shadow:0 6px 18px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.05);
+  transition:.25s;
+}
+.menu-item:active{transform:scale(.98);background:rgba(37,240,192,.09);border-color:rgba(37,240,192,.35);}
+.menu-left{display:flex;align-items:center;gap:14px;font-size:15px;font-weight:500;color:#e6f7f5;}
+.menu-icon{
+  width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:15px;
+  color:#031215;background:linear-gradient(135deg,#25f0c0,#4ad8ff);
+  box-shadow:0 4px 14px rgba(37,240,192,.35);
+}
+.arrow-icon{font-size:13px;color:#4e7a7f;}
+
+/* BOTTOM NAV */
+.bottom-nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;z-index:20;
+  display:flex;justify-content:space-around;align-items:center;
+  padding:9px 10px 14px;
+  background:rgba(4,20,24,.82);backdrop-filter:blur(20px);
+  border-top:1px solid rgba(255,255,255,.07);
+  box-shadow:0 -8px 30px rgba(0,0,0,.6);
+}
+.nav-item{
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  color:#5c8386;font-size:10.5px;font-weight:500;
+  text-decoration:none;position:relative;flex:1;transition:.25s;
+}
+.nav-icon-wrap{
+  width:44px;height:30px;border-radius:14px;
+  display:grid;place-items:center;font-size:17px;transition:.3s;
+}
+.nav-item.active{color:var(--mint);}
+.nav-item.active .nav-icon-wrap{
+  background:linear-gradient(135deg,rgba(37,240,192,.28),rgba(74,216,255,.12));
+  box-shadow:0 0 20px rgba(37,240,192,.4),inset 0 0 12px rgba(37,240,192,.18);
+  transform:translateY(-2px);
+}
+.nav-badge{
+  position:absolute;top:-3px;right:22px;
+  background:linear-gradient(135deg,#ff5b6b,#ff2d55);
+  color:#fff;font-size:9px;font-weight:700;
+  padding:1px 6px;border-radius:20px;
+  box-shadow:0 0 10px rgba(255,45,85,.6);
+}
+
+/* MODAL */
+.modal-overlay{
+  position:fixed;inset:0;z-index:100;
+  display:none;justify-content:center;align-items:center;padding:20px;
+  background:rgba(0,0,0,.78);backdrop-filter:blur(6px);
+  animation:fadeIn .25s ease;
+}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.modal-box{
+  width:100%;max-width:380px;
+  display:flex;flex-direction:column;gap:16px;
+  padding:20px;border-radius:22px;
+  background:linear-gradient(160deg,#0a2a30,#051a1f);
+  border:1px solid rgba(37,240,192,.35);
+  box-shadow:0 20px 60px rgba(0,0,0,.7),0 0 40px rgba(37,240,192,.12);
+  animation:popIn .3s cubic-bezier(.2,.9,.3,1.3);
+}
+@keyframes popIn{from{opacity:0;transform:scale(.9) translateY(20px);}to{opacity:1;transform:scale(1) translateY(0);}}
+
+.modal-top{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.09);
+}
+.modal-top h3{
+  font-size:17px;font-weight:700;
+  background:linear-gradient(90deg,#25f0c0,#4ad8ff);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.close-btn{
+  width:30px;height:30px;display:grid;place-items:center;
+  font-size:16px;color:#8fb5b8;cursor:pointer;border-radius:50%;
+  background:rgba(255,255,255,.06);transition:.2s;
+}
+.close-btn:active{transform:scale(.88);background:rgba(255,255,255,.12);}
+
+.form-group{display:flex;flex-direction:column;gap:8px;}
+.form-group label{font-size:12.5px;color:#8be4f0;font-weight:500;}
+.form-group input[type="text"]{
+  background:#03151a;border:1px solid #1a5560;
+  padding:12px 14px;border-radius:12px;
+  color:#fff;font-size:14px;font-family:inherit;outline:none;transition:.25s;
+}
+.form-group input[type="text"]:focus{
+  border-color:var(--mint);box-shadow:0 0 0 3px rgba(37,240,192,.14);
+}
+.file-btn{
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  padding:12px;border-radius:12px;cursor:pointer;
+  font-size:13.5px;font-weight:600;color:var(--mint);
+  background:rgba(37,240,192,.09);
+  border:1px dashed rgba(37,240,192,.5);transition:.25s;
+}
+.file-btn:active{background:rgba(37,240,192,.18);}
+
+.crop-wrapper{width:100%;max-height:230px;overflow:hidden;border-radius:12px;background:#000;display:none;}
+.crop-wrapper img{max-width:100%;display:block;}
+
+.save-btn{
+  padding:14px;border:none;border-radius:14px;cursor:pointer;
+  font-family:inherit;font-weight:700;font-size:15px;color:#031215;
+  background:linear-gradient(135deg,#25f0c0,#31d7ff);
+  box-shadow:0 8px 22px rgba(37,240,192,.35);transition:.25s;
+}
+.save-btn:active{transform:scale(.97);}
+
+/* USER LIST */
+.user-list{
+  display:flex;flex-direction:column;gap:10px;
+  max-height:320px;overflow-y:auto;padding-right:4px;
+}
+.user-list::-webkit-scrollbar{width:4px;}
+.user-list::-webkit-scrollbar-thumb{background:rgba(37,240,192,.35);border-radius:10px;}
+
+.user-item-row{
+  display:flex;align-items:center;gap:12px;padding:10px 12px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:14px;
+  animation:rowIn .3s ease;
+  transition:.25s;
+}
+@keyframes rowIn{from{opacity:0;transform:translateX(-8px);}to{opacity:1;transform:translateX(0);}}
+.user-item-row.removing{
+  animation:rowOut .35s ease forwards;
+}
+@keyframes rowOut{to{opacity:0;transform:translateX(30px);max-height:0;padding:0;margin:0;border:0;}}
+.user-item-row img{
+  width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;
+  border:2px solid rgba(37,240,192,.4);
+  box-shadow:0 0 10px rgba(37,240,192,.2);
+}
+.user-row-info{flex:1;min-width:0;}
+.user-row-name{
+  font-weight:600;font-size:14px;color:#eafaf7;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.user-row-uid{font-size:11px;color:#7fa8ad;margin-top:3px;letter-spacing:.3px;}
+
+.row-follow-btn{
+  flex-shrink:0;
+  padding:7px 16px;border-radius:20px;border:none;cursor:pointer;
+  font-family:inherit;font-weight:700;font-size:12px;
+  color:#031215;
+  background:linear-gradient(135deg,#25f0c0,#31d7ff);
+  box-shadow:0 4px 12px rgba(37,240,192,.35);
+  transition:.2s;
+}
+.row-follow-btn:active{transform:scale(.92);}
+.row-follow-btn.following{
+  background:rgba(37,240,192,.10);
+  color:var(--mint);
+  border:1px solid rgba(37,240,192,.55);
+  box-shadow:0 0 14px rgba(37,240,192,.18) inset;
+}
+
+.empty-state{
+  padding:30px 10px;text-align:center;
+  color:var(--muted);font-size:13px;
+}
+.empty-state i{font-size:32px;opacity:.35;display:block;margin-bottom:10px;}
+</style>
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <span class="title">Me</span>
+    <i class="fa-solid fa-gear settings-icon"></i>
+  </div>
+
+  <!-- Profile -->
+  <div class="profile-section">
+    <div class="profile-info">
+      <div class="profile-left">
+        <div class="avatar-wrap" id="openEditModal1">
+          <img id="mainAvatar" src="https://picsum.photos/150/150?random=88" alt="Profile">
+          <span class="camera-badge"><i class="fa-solid fa-camera"></i></span>
+        </div>
+        <div class="user-details">
+          <div class="username-wrap" id="openEditModal2">
+            <span class="username" id="mainUsername">Loading...</span>
+            <i class="fa-solid fa-pen edit-icon"></i>
+          </div>
+          <div class="id-badge">
+            <span id="myUidText">ID ------</span>
+            <i class="fa-regular fa-copy" id="copyUidBtn"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-item" onclick="openStatsList('Following')">
+        <span class="num" id="followingCount">0</span>
+        <span class="label">Following</span>
+      </div>
+      <div class="divider"></div>
+      <div class="stat-item" onclick="openStatsList('Followers')">
+        <span class="num" id="followersCount">0</span>
+        <span class="label">Followers</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SVIP Card -->
+  <div class="svip-card">
+    <div class="svip-info">
+      <div class="svip-title">SVIP1</div>
+      <div class="svip-subtitle">Recharge to get SVIP privileges</div>
+      <div class="enter-btn">
+        <span>Enter</span>
+        <i class="fa-solid fa-chevron-right"></i>
+      </div>
+    </div>
+    <img class="svip-badge-img" src="https://cdn-icons-png.flaticon.com/512/2583/2583344.png" alt="SVIP Badge">
+  </div>
+
+  <!-- Menu -->
+  <div class="menu-list">
+    <div class="menu-item">
+      <div class="menu-left">
+        <span class="menu-icon"><i class="fa-solid fa-bag-shopping"></i></span>
+        <span>Bag</span>
+      </div>
+      <i class="fa-solid fa-chevron-right arrow-icon"></i>
+    </div>
+
+    <div class="menu-item">
+      <div class="menu-left">
+        <span class="menu-icon"><i class="fa-solid fa-sliders"></i></span>
+        <span>User Control</span>
+      </div>
+      <i class="fa-solid fa-chevron-right arrow-icon"></i>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <a href="#" class="nav-item">
+      <span class="nav-icon-wrap"><i class="fa-solid fa-house"></i></span>
+      <span>Room</span>
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon-wrap">
+        <i class="fa-solid fa-comment-dots"></i>
+        <span class="nav-badge">4</span>
+      </span>
+      <span>Messages</span>
+    </a>
+    <a href="#" class="nav-item active">
+      <span class="nav-icon-wrap"><i class="fa-solid fa-user"></i></span>
+      <span>Me</span>
+    </a>
+  </nav>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <div class="modal-top">
+      <h3>প্রোফাইল পরিবর্তন করুন</h3>
+      <i class="fa-solid fa-xmark close-btn" id="closeModal"></i>
+    </div>
+    <div class="form-group">
+      <label for="nameInput">নতুন নাম লিখুন</label>
+      <input type="text" id="nameInput" placeholder="আপনার নাম">
+    </div>
+    <div class="form-group">
+      <label>নতুন ছবি সিলেক্ট করুন</label>
+      <label class="file-btn" for="imageInput">
+        <i class="fa-solid fa-image"></i> ছবি নির্বাচন করুন
+      </label>
+      <input type="file" id="imageInput" accept="image/*" hidden>
+    </div>
+    <div class="crop-wrapper" id="cropWrapper">
+      <img id="cropImageSrc" src="" alt="Crop Preview">
+    </div>
+    <button class="save-btn" id="saveProfileBtn">Save Changes</button>
+  </div>
+</div>
+
+<!-- Stats List Modal -->
+<div class="modal-overlay" id="statsModal">
+  <div class="modal-box">
+    <div class="modal-top">
+      <h3 id="statsModalTitle">List</h3>
+      <i class="fa-solid fa-xmark close-btn" id="closeStatsModal"></i>
+    </div>
+    <div class="user-list" id="userListContainer"></div>
+  </div>
+</div>
+<!-- Firebase Integration -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+/* Firebase Config */
+const firebaseConfig = {
+  apiKey: "AIzaSyCTn3QEYtRMxm7Y91RSFSvbRJSRHcXMEdI",
+  authDomain: "room-7fbf7.firebaseapp.com",
+  databaseURL: "https://room-7fbf7-default-rtdb.firebaseio.com",
+  projectId: "room-7fbf7",
+  storageBucket: "room-7fbf7.firebasestorage.app",
+  messagingSenderId: "417946695868",
+  appId: "1:417946695868:web:34c6f63269aaf659b2b8b9",
+  measurementId: "G-726ZPVK7"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+let currentUser = null;
+
+/* Auth Check & Load Real Data */
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+    const userSnap = await get(ref(db, 'users/' + user.uid));
+    if (userSnap.exists()) {
+      const data = userSnap.val();
+      document.getElementById('mainUsername').innerText = data.name || user.displayName || 'User';
+      document.getElementById('myUidText').innerText = 'ID ' + (data.moiId || user.uid.substring(0,8));
+      if (data.photo || user.photoURL) {
+        document.getElementById('mainAvatar').src = data.photo || user.photoURL;
+      }
+    }
+  } else {
+    window.location.href = 'index.html';
+  }
+});
+
+/* Save Profile Logic with Firebase Sync */
+window.saveProfileToFirebase = async function(newName, newPhotoDataUrl) {
+  if (!currentUser) return;
+  const updates = {};
+  if (newName) updates['/users/' + currentUser.uid + '/name'] = newName;
+  if (newPhotoDataUrl) updates['/users/' + currentUser.uid + '/photo'] = newPhotoDataUrl;
+  
+  await update(ref(db), updates);
+};
+</script>
+
+<script>
+/* ===== ELEMENTS ===== */
+const openEditModal1 = document.getElementById('openEditModal1');
+const openEditModal2 = document.getElementById('openEditModal2');
+const editModal      = document.getElementById('editModal');
+const closeModalBtn  = document.getElementById('closeModal');
+
+const mainUsername = document.getElementById('mainUsername');
+const mainAvatar   = document.getElementById('mainAvatar');
+
+const nameInput    = document.getElementById('nameInput');
+const imageInput   = document.getElementById('imageInput');
+const cropImageSrc = document.getElementById('cropImageSrc');
+const cropWrapper  = document.getElementById('cropWrapper');
+const saveProfileBtn = document.getElementById('saveProfileBtn');
+
+let cropper = null;
+
+/* ===== DATA (demo) ===== */
+let followingUsers = [
+  { uid:'1002301', name:'Rahim Ahmed',  avatar:'https://picsum.photos/80/80?random=11' },
+  { uid:'1002302', name:'Karim Khan',   avatar:'https://picsum.photos/80/80?random=12' },
+  { uid:'1002303', name:'Sumaiya Akter',avatar:'https://picsum.photos/80/80?random=13' },
+  { uid:'1002304', name:'Nusrat Jahan', avatar:'https://picsum.photos/80/80?random=14' },
+  { uid:'1002305', name:'Tanvir Hasan', avatar:'https://picsum.photos/80/80?random=15' }
+];
+
+let followersUsers = [
+  { uid:'1002301', name:'Rahim Ahmed',  avatar:'https://picsum.photos/80/80?random=11' },
+  { uid:'1002306', name:'Mehedi Hasan', avatar:'https://picsum.photos/80/80?random=16' },
+  { uid:'1002307', name:'Ayesha Sidd',  avatar:'https://picsum.photos/80/80?random=17' },
+  { uid:'1002308', name:'Rifat Islam',  avatar:'https://picsum.photos/80/80?random=18' },
+  { uid:'1002309', name:'Farhana Yeasmin', avatar:'https://picsum.photos/80/80?random=19' },
+  { uid:'1002310', name:'Shakib Al',    avatar:'https://picsum.photos/80/80?random=20' }
+];
+
+function isFollowingUid(uid){
+  return followingUsers.some(u => u.uid === uid);
+}
+
+/* ===== COUNT UPDATE ===== */
+const followingCountEl = document.getElementById('followingCount');
+const followersCountEl = document.getElementById('followersCount');
+
+function refreshCounts(){
+  followingCountEl.innerText = followingUsers.length;
+  followersCountEl.innerText = followersUsers.length;
+}
+refreshCounts();
+
+/* ===== EDIT MODAL ===== */
+function openModal(){
+  nameInput.value = mainUsername.innerText;
+  editModal.style.display = 'flex';
+}
+function hideModal(){
+  editModal.style.display = 'none';
+  if (cropper){ cropper.destroy(); cropper = null; }
+  cropWrapper.style.display = 'none';
+  imageInput.value = '';
+}
+openEditModal1.addEventListener('click', openModal);
+openEditModal2.addEventListener('click', openModal);
+closeModalBtn.addEventListener('click', hideModal);
+editModal.addEventListener('click', (e)=>{ if (e.target === editModal) hideModal(); });
+
+/* ===== IMAGE CROP ===== */
+imageInput.addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    cropImageSrc.src = ev.target.result;
+    cropWrapper.style.display = 'block';
+    if (cropper) cropper.destroy();
+    cropper = new Cropper(cropImageSrc, {
+      aspectRatio: 1, viewMode: 1, dragMode:'move',
+      autoCropArea: 0.9, background:false, guides:false
+    });
+  };
+  reader.readAsDataURL(file);
+});
+
+saveProfileBtn.addEventListener('click', async ()=>{
+  const newName = nameInput.value.trim();
+  let croppedDataUrl = null;
+  
+  if (newName !== '') mainUsername.innerText = newName;
+  if (cropper){
+    const canvas = cropper.getCroppedCanvas({ width: 320, height: 320 });
+    croppedDataUrl = canvas.toDataURL('image/jpeg', 0.92);
+    mainAvatar.src = croppedDataUrl;
+  }
+  
+  // ফায়ারবেসে সেভ হবে
+  if (window.saveProfileToFirebase) {
+    await window.saveProfileToFirebase(newName, croppedDataUrl);
+  }
+  
+  hideModal();
+});
+
+/* ===== STATS MODAL ===== */
+const statsModal        = document.getElementById('statsModal');
+const closeStatsModal   = document.getElementById('closeStatsModal');
+const statsModalTitle   = document.getElementById('statsModalTitle');
+const userListContainer = document.getElementById('userListContainer');
+
+let currentViewType = 'Following';
+
+function openStatsList(type){
+  currentViewType = type;
+  statsModalTitle.innerText = type === 'Following' ? 'Following তালিকা' : 'Followers তালিকা';
+  renderUserList();
+  statsModal.style.display = 'flex';
+}
+
+function renderUserList(){
+  userListContainer.innerHTML = '';
+  const list = currentViewType === 'Following' ? followingUsers : followersUsers;
+
+  if (list.length === 0){
+    userListContainer.innerHTML = `
+      <div class="empty-state">
+        <i class="fa-regular fa-face-frown"></i>
+        কোনো ইউজার নেই
+      </div>`;
+    return;
+  }
+
+  list.forEach((user, idx)=>{
+    const iFollow = isFollowingUid(user.uid);
+
+    const row = document.createElement('div');
+    row.className = 'user-item-row';
+    row.style.animationDelay = (idx * 0.04) + 's';
+
+    row.innerHTML = `
+      <img src="${user.avatar}" alt="">
+      <div class="user-row-info">
+        <div class="user-row-name">${user.name}</div>
+        <div class="user-row-uid">UID: ${user.uid}</div>
+      </div>
+      <button class="row-follow-btn ${iFollow ? 'following' : ''}"
+              data-uid="${user.uid}">
+        ${iFollow ? 'Following' : 'Follow'}
+      </button>
+    `;
+
+    row.querySelector('.row-follow-btn')
+       .addEventListener('click', ()=> handleRowToggle(user.uid, row));
+
+    userListContainer.appendChild(row);
+  });
+}
+
+/* ===== FOLLOW / UNFOLLOW LOGIC ===== */
+function handleRowToggle(uid, rowEl){
+  const btn = rowEl.querySelector('.row-follow-btn');
+  const isCurrentlyFollowing = isFollowingUid(uid);
+
+  if (isCurrentlyFollowing){
+    followingUsers = followingUsers.filter(u => u.uid !== uid);
+
+    if (currentViewType === 'Following'){
+      rowEl.classList.add('removing');
+      setTimeout(()=>{
+        rowEl.remove();
+        if (userListContainer.children.length === 0) renderUserList();
+      }, 350);
+    } else {
+      btn.classList.remove('following');
+      btn.innerText = 'Follow';
+    }
+  } else {
+    const src = (currentViewType === 'Following' ? followingUsers : followersUsers)
+                 .find(u => u.uid === uid);
+    if (src && !followingUsers.some(u => u.uid === uid)){
+      followingUsers.push({ uid: src.uid, name: src.name, avatar: src.avatar });
+    }
+    btn.classList.add('following');
+    btn.innerText = 'Following';
+  }
+
+  refreshCounts();
+}
+
+closeStatsModal.addEventListener('click', ()=>{ statsModal.style.display = 'none'; });
+statsModal.addEventListener('click', (e)=>{ if (e.target === statsModal) statsModal.style.display = 'none'; });
+
+/* ===== COPY UID ===== */
+document.getElementById('copyUidBtn').addEventListener('click', function(){
+  const uid = document.getElementById('myUidText').innerText.replace('ID ', '');
+  navigator.clipboard?.writeText(uid);
+  this.classList.remove('fa-regular','fa-copy');
+  this.classList.add('fa-solid','fa-check');
+  setTimeout(()=>{
+    this.classList.remove('fa-solid','fa-check');
+    this.classList.add('fa-regular','fa-copy');
+  }, 1400);
+});
+</script>
+</body>
+</html>
+
